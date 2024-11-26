@@ -209,7 +209,6 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         boolean archivoExistente = verificarArchivoExistente(nombreArchivo);
          
         
-        
         try (Workbook libroTrabajo = archivoExistente ? WorkbookFactory.create(new FileInputStream(nombreArchivo)) : new XSSFWorkbook()) {
             Sheet hoja = libroTrabajo.getSheet(nombreHoja);
             
