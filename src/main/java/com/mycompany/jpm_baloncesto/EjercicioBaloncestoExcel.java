@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import javax.swing.JOptionPane;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,7 +18,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @author drank
  */
 public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
-    private static String nombreJugador;
     private static Integer tirosDe2Realizados, tirosDe2Metidos, triplesRealizados, triplesMetidos, 
             tirosLibresMetidos, tirosLibresRealizados, rebotes, asistencias, taponesFavor, taponesContra,
             robos, perdidas;
@@ -30,6 +30,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         this.setResizable(false);
         this.setTitle("Estadísticas Baloncesto");
+        selectorEquipos.setSelectedItem("LA Lakers");
     }
 
     /**
@@ -44,8 +45,6 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         paneles = new javax.swing.JTabbedPane();
         panelTiros = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        campoTextoJugador = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         numTirosLibresMetidos = new javax.swing.JSpinner();
         jLabel7 = new javax.swing.JLabel();
@@ -72,13 +71,13 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         numTaponesContra = new javax.swing.JSpinner();
         numPerdidas = new javax.swing.JSpinner();
         botonInsertar = new javax.swing.JButton();
+        selectorEquipos = new javax.swing.JComboBox<>();
+        selectorJugadores = new javax.swing.JComboBox<>();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel2.setText("Nombre Jugador:");
-
-        campoTextoJugador.setToolTipText("Inserta el nombre");
 
         jLabel6.setText("Tiros libres metidos:");
 
@@ -127,42 +126,32 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(numTirosDe2Metidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
                         .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTirosLayout.createSequentialGroup()
                                 .addComponent(jLabel7)
                                 .addGap(18, 18, 18)
                                 .addComponent(numTirosLibresRealizados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTirosLayout.createSequentialGroup()
+                                .addGroup(panelTirosLayout.createSequentialGroup()
                                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGap(18, 18, 18)
                                     .addComponent(numTriplesRealizados, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(panelTirosLayout.createSequentialGroup()
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addComponent(numTirosDe2Realizados, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(panelTirosLayout.createSequentialGroup()
-                        .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelTirosLayout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(campoTextoJugador, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(panelTirosLayout.createSequentialGroup()
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19)
-                                .addComponent(numTriplesMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19)
+                        .addComponent(numTriplesMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 330, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelTirosLayout.setVerticalGroup(
             panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTirosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(campoTextoJugador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+            .addGroup(panelTirosLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
                 .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(numTirosLibresMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -182,7 +171,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                     .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(numTriplesMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel4)))
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(76, Short.MAX_VALUE))
         );
 
         paneles.addTab("Tiros", panelTiros);
@@ -250,7 +239,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                         .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(numPerdidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(69, Short.MAX_VALUE))
         );
         panelOtrosDatosLayout.setVerticalGroup(
             panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -285,32 +274,65 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             }
         });
 
+        selectorEquipos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "LA Lakers", "GS Warriors" }));
+        selectorEquipos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectorEquiposActionPerformed(evt);
+            }
+        });
+
+        selectorJugadores.setToolTipText("");
+        selectorJugadores.setName(""); // NOI18N
+
+        jLabel15.setText("Jugador:");
+
+        jLabel16.setText("Equipo:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(paneles)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(botonInsertar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(paneles)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(botonInsertar)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(selectorJugadores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(selectorEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(paneles, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(selectorEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(selectorJugadores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15)
+                    .addComponent(jLabel16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(paneles, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(botonInsertar)
-                .addGap(0, 10, Short.MAX_VALUE))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 540, 280));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 580, 420));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonInsertarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonInsertarActionPerformed
-        nombreJugador = campoTextoJugador.getText();
         tirosLibresMetidos = (Integer) numTirosLibresMetidos.getValue();
         tirosLibresRealizados = (Integer) numTirosLibresRealizados.getValue();
         tirosDe2Metidos = (Integer) numTirosDe2Metidos.getValue();
@@ -323,13 +345,15 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         taponesContra = (Integer) numTaponesContra.getValue();
         robos = (Integer) numRobos.getValue();
         perdidas = (Integer) numPerdidas.getValue();
+        String nombreJugador = (String) selectorJugadores.getSelectedItem();
         
-        String nombreArchivo = "jugadores_baloncesto.xlsx";
-        
-        if (nombreJugador == null || nombreJugador.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Inserte un nombre.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+        String nombreEquipo = (String) selectorEquipos.getSelectedItem();
+        String nombreArchivo = "LA_Lakers.xlsx";
+        if (!nombreEquipo.equals("LA Lakers")) {
+            nombreArchivo = "GS_Warriors.xlsx";
         }
+        
+        
         
         if ((tirosDe2Metidos + triplesMetidos + tirosLibresMetidos) > (triplesRealizados + tirosDe2Realizados + tirosLibresRealizados)) {
             JOptionPane.showMessageDialog(this, "La suma de los tiros metidos no puede ser mayor a los tiros realizados.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -346,24 +370,57 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Datos insertados.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_botonInsertarActionPerformed
 
-    public static boolean archivoEstaAbierto(String nombreArchivo) {
-        try (FileOutputStream fos = new FileOutputStream(nombreArchivo, true)) {
+    private void selectorEquiposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectorEquiposActionPerformed
+        equipoElegido();
+    }//GEN-LAST:event_selectorEquiposActionPerformed
+
+    private void equipoElegido() {
+        selectorJugadores.removeAllItems();
+        if ((String) selectorEquipos.getSelectedItem() == "LA Lakers") {
+            selectorJugadores.addItem("Lebron");
+            selectorJugadores.addItem("Dalton");
+            selectorJugadores.addItem("Bronny");
+            selectorJugadores.addItem("Anthony");
+            selectorJugadores.addItem("Jarred");
+        } else if ((String) selectorEquipos.getSelectedItem() == "GS Warriors") {
+            selectorJugadores.addItem("Stephen");
+            selectorJugadores.addItem("Buddy");
+            selectorJugadores.addItem("Draymond");
+            selectorJugadores.addItem("Brandin");
+            selectorJugadores.addItem("Quinten");
+        }
+    }
+    
+    public boolean archivoEstaAbierto(String nombreArchivo) {
+        File archivo = new File(nombreArchivo);
+        if (!archivo.exists()) {
+            return false;
+        }
+
+        try (RandomAccessFile raf = new RandomAccessFile(archivo, "rw")) {
             return false;
         } catch (IOException e) {
             return true;
         }
     }
     
-    private static void crearInforme(String nombreArchivoIn, String nombreJugador, Integer tirosLibresMetidos, Integer tirosLibresRealizados, 
+    private void crearInforme(String nombreArchivoIn, String nombreJugador, Integer tirosLibresMetidos, Integer tirosLibresRealizados, 
             Integer tirosDe2Metidos, Integer tirosDe2Realizados, 
             Integer triplesMetidos, Integer triplesRealizados, Integer rebotes, Integer asistencias, 
             Integer taponesFavor, Integer taponesContra, Integer robos, Integer perdidas) {
         String nombreArchivo = nombreArchivoIn;
-        String nombreHoja = "Version2";
-        boolean archivoExistente = verificarArchivoExistente(nombreArchivo);
+        String nombreHoja = nombreJugador;
          
         
-        try (Workbook libroTrabajo = archivoExistente ? WorkbookFactory.create(new FileInputStream(nombreArchivo)) : new XSSFWorkbook()) {
+        File archivo = new File(nombreArchivo);
+        Workbook libroTrabajo;
+        
+        try {
+            if (archivo.exists() && archivo.isFile()) {
+                libroTrabajo = WorkbookFactory.create(new FileInputStream(archivo)); // Lee el archivo y crea la factory
+            } else {
+                libroTrabajo = new XSSFWorkbook();
+            }
             Sheet hoja = libroTrabajo.getSheet(nombreHoja);
             
             CellStyle estiloMain = libroTrabajo.createCellStyle();
@@ -377,9 +434,10 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             if (hoja == null) {
                 hoja = libroTrabajo.createSheet(nombreHoja);
                 Row fila = hoja.createRow(0);
+                System.out.println("Hoja creada correctamente para: " + nombreHoja);
 
                 String[] encabezados = {
-                    "Jugador", "Tiros libres metidos", "Tiros libres realizados",
+                    "Tiros libres metidos", "Tiros libres realizados",
                     "Tiros de 2 metidos", "Tiros de 2 realizados", "Triples metidos",
                     "Triples realizados", "Rebotes", "Asistencias", "Tapones a favor", 
                     "Tapones en contra", "Robos", "Perdidas", "Valoracion", "FG%", "eFG%", "TS%"
@@ -392,11 +450,22 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                 }
             }
             
-            // Borrar fila Media si ya existe
-            for (int i = hoja.getPhysicalNumberOfRows() - 1; i >= 0; i--) {
-                Row filaExistente = hoja.getRow(i);
-                if (filaExistente != null && filaExistente.getCell(0) != null && filaExistente.getCell(0).getStringCellValue().equals("Media")) {
-                    hoja.removeRow(filaExistente);
+           
+            int numeroFilas = hoja.getPhysicalNumberOfRows();
+
+            // Verificar si la penúltima fila es "Media"
+            Row ultimaFila = hoja.getRow(numeroFilas - 2);
+            if (ultimaFila != null && ultimaFila.getCell(0) != null) {
+                Cell cell = ultimaFila.getCell(0);
+                if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().equals("Media")) {
+                    // Eliminar las dos últimas filas que contienen "Media" y los valores
+                    for (int i = 0; i < 2; i++) {
+                        int filaIndice = numeroFilas - 1 - i;  // Obtener la fila a eliminar
+                        Row fila = hoja.getRow(filaIndice);
+                        if (fila != null) {
+                            hoja.removeRow(fila);  // Eliminar la fila
+                        }
+                    }
                 }
             }
             
@@ -424,102 +493,93 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             int filaNumero = hoja.getPhysicalNumberOfRows();
             Row fila = hoja.createRow(filaNumero);
             Cell celda = fila.createCell(0, CellType.STRING);
-            celda.setCellValue(nombreJugador);
-            celda = fila.createCell(1, CellType.NUMERIC);
             celda.setCellValue(tirosLibresMetidos);
-            celda = fila.createCell(2, CellType.NUMERIC);
+            celda = fila.createCell(1, CellType.NUMERIC);
             celda.setCellValue(tirosLibresRealizados);
-            celda = fila.createCell(3, CellType.NUMERIC);
+            celda = fila.createCell(2, CellType.NUMERIC);
             celda.setCellValue(tirosDe2Metidos);
-            celda = fila.createCell(4, CellType.NUMERIC);
+            celda = fila.createCell(3, CellType.NUMERIC);
             celda.setCellValue(tirosDe2Realizados);
-            celda = fila.createCell(5, CellType.NUMERIC);
+            celda = fila.createCell(4, CellType.NUMERIC);
             celda.setCellValue(triplesMetidos);
-            celda = fila.createCell(6, CellType.NUMERIC);
+            celda = fila.createCell(5, CellType.NUMERIC);
             celda.setCellValue(triplesRealizados);
-            celda = fila.createCell(7, CellType.NUMERIC);
+            celda = fila.createCell(6, CellType.NUMERIC);
             celda.setCellValue(rebotes);
-            celda = fila.createCell(8, CellType.NUMERIC);
+            celda = fila.createCell(7, CellType.NUMERIC);
             celda.setCellValue(asistencias);
-            celda = fila.createCell(9, CellType.NUMERIC);
+            celda = fila.createCell(8, CellType.NUMERIC);
             celda.setCellValue(taponesFavor);
-            celda = fila.createCell(10, CellType.NUMERIC);
+            celda = fila.createCell(9, CellType.NUMERIC);
             celda.setCellValue(taponesContra);
-            celda = fila.createCell(11, CellType.NUMERIC);
+            celda = fila.createCell(10, CellType.NUMERIC);
             celda.setCellValue(robos);
-            celda = fila.createCell(12, CellType.NUMERIC);
+            celda = fila.createCell(11, CellType.NUMERIC);
             celda.setCellValue(perdidas);
-            celda = fila.createCell(13, CellType.NUMERIC);
+            celda = fila.createCell(12, CellType.NUMERIC);
             celda.setCellValue(valoracion);
-            celda = fila.createCell(14, CellType.NUMERIC);
+            celda = fila.createCell(13, CellType.NUMERIC);
             celda.setCellValue(FG);
-            celda = fila.createCell(15, CellType.NUMERIC);
+            celda = fila.createCell(14, CellType.NUMERIC);
             celda.setCellValue(eFG);
-            celda = fila.createCell(16, CellType.NUMERIC);
+            celda = fila.createCell(15, CellType.NUMERIC);
             celda.setCellValue(TS);
             
+            
 
-            // Luego, crea la nueva fila de media en la última posición
-            Row filaMedia = hoja.createRow(hoja.getPhysicalNumberOfRows());
-            Cell celdaMedia = filaMedia.createCell(0);
-            celdaMedia.setCellValue("Media");
-            celdaMedia.setCellStyle(estilo);
+            // Obtener el número de filas ya existentes
+            numeroFilas = hoja.getPhysicalNumberOfRows();
 
-            // Cálculo de medias
-            for (int col = 1; col <= 16; col++) {
+
+            // Insertamos una nueva fila para el texto "Media"
+            Row filaMediaTexto = hoja.createRow(numeroFilas);  // Fila para el texto "Media"
+            Cell celdaMediaTexto = filaMediaTexto.createCell(0);
+            celdaMediaTexto.setCellValue("Media");
+            celdaMediaTexto.setCellStyle(estilo);  // Aplicar el estilo
+
+            // Crear una fila adicional para los valores de medias
+            Row filaMediaValores = hoja.createRow(numeroFilas + 1);  // Fila para los valores
+
+            // Cálculo de medias para cada columna
+            for (int col = 0; col < 16; col++) {  // Para cada columna de datos
                 double suma = 0;
-                int filasDatos = hoja.getPhysicalNumberOfRows() - 1;
-                for (int i = 1; i <= filasDatos; i++) {
+                int filasDatos = numeroFilas;  // Número de filas de datos para la media
+                int conteoDatos = 0;  // Contador de celdas con datos
+
+                // Recorrer las filas y sumar los valores de cada celda
+                for (int i = 1; i <= filasDatos; i++) {  // Desde la fila 1 hasta la última
                     Row filaActual = hoja.getRow(i);
-                    if (filaActual == null) {
-                        filaActual = hoja.createRow(i);  // Crea la fila si no existe
-                    }
                     if (filaActual != null && filaActual.getCell(col) != null) {
-                        suma += filaActual.getCell(col).getNumericCellValue();
+                        // Verificamos si la celda tiene un valor numérico
+                        if (filaActual.getCell(col).getCellType() == CellType.NUMERIC) {
+                            suma += filaActual.getCell(col).getNumericCellValue();
+                            conteoDatos++;  // Incrementamos el contador si hay un dato
+                        }
                     }
                 }
-                double media = suma / (filasDatos - 1); // Número total de filas con datos
-                Cell celdasMedia = filaMedia.createCell(col, CellType.NUMERIC);
-                celdasMedia.setCellValue(media);
-                celdasMedia.setCellStyle(estilo);
+
+                // Calcular la media solo si hay datos válidos
+                double media = conteoDatos > 0 ? suma / conteoDatos : 0;  // Evitar división por 0 si no hay datos
+                Cell celdaMediaValores = filaMediaValores.createCell(col, CellType.NUMERIC);
+                celdaMediaValores.setCellValue(media);
+                celdaMediaValores.setCellStyle(estilo);  // Aplicar el estilo
             }
 
                 try (FileOutputStream archivoSalida = new FileOutputStream(nombreArchivo)) {
                     libroTrabajo.write(archivoSalida);
                     System.out.println("Datos agregados al archivo Excel correctamente.");
+                } catch (IOException e) {
+                    System.out.println("Error al escribir el archivo: " + e.getMessage());
+                    e.printStackTrace();
                 }
+                libroTrabajo.close();
             
         } catch (IOException e) {
                 e.printStackTrace();
             }
-        
-        // Reabrir el archivo y leer los datos actualizados
-        try (Workbook libroTrabajo = WorkbookFactory.create(new FileInputStream(nombreArchivo))) {
-            Sheet hoja = libroTrabajo.getSheet(nombreHoja);
-            int filaNumero = hoja.getPhysicalNumberOfRows();
-
-            System.out.println("Datos actualizados en el archivo:");
-            for (int i = 0; i < filaNumero; i++) {
-                Row filab = hoja.getRow(i);
-                if (filab != null) { // Verifica que la fila no esté vacía
-                    for (int cellIndex = 0; cellIndex < filab.getLastCellNum(); cellIndex++) {
-                        Cell celda = filab.getCell(cellIndex);
-
-                        // Verifica si la celda contiene algún valor
-                        if (celda != null) {
-                            System.out.println("Valor encontrado en hoja " + hoja.getSheetName() + ", fila " + (i + 1) + ", columna " + (cellIndex + 1) + ": " + celda.toString());
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+  
     }
     
-    private static boolean verificarArchivoExistente(String nombreArchivo) {
-        return new File(nombreArchivo).exists();
-    }
     /**
      * @param args the command line arguments
      */
@@ -559,13 +619,13 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonInsertar;
-    private javax.swing.JTextField campoTextoJugador;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -589,5 +649,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
     private javax.swing.JPanel panelOtrosDatos;
     private javax.swing.JPanel panelTiros;
     private javax.swing.JTabbedPane paneles;
+    private javax.swing.JComboBox<String> selectorEquipos;
+    private javax.swing.JComboBox<String> selectorJugadores;
     // End of variables declaration//GEN-END:variables
 }
