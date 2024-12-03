@@ -12,6 +12,13 @@ import java.io.RandomAccessFile;
 import javax.swing.JOptionPane;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtils;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
+import java.awt.Color;
 
 /**
  *
@@ -31,6 +38,8 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         this.setResizable(false);
         this.setTitle("Estadísticas Baloncesto");
         selectorEquipos.setSelectedItem("LA Lakers");
+        // minimumSize = this.getSize
+        // setSize = el deseado
     }
 
     /**
@@ -75,6 +84,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         selectorJugadores = new javax.swing.JComboBox<>();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
+        botonCrearGrafica = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -288,6 +298,13 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
 
         jLabel16.setText("Equipo:");
 
+        botonCrearGrafica.setText("Crear Gráfica");
+        botonCrearGrafica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCrearGraficaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -298,7 +315,8 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                     .addComponent(paneles)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(botonInsertar)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botonCrearGrafica)))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
@@ -323,11 +341,13 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(paneles, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(botonInsertar)
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(botonInsertar)
+                    .addComponent(botonCrearGrafica))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 580, 420));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 580, 390));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -374,6 +394,23 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         equipoElegido();
     }//GEN-LAST:event_selectorEquiposActionPerformed
 
+    private void botonCrearGraficaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCrearGraficaActionPerformed
+        String nombreJugador = (String) selectorJugadores.getSelectedItem();
+        
+        String nombreEquipo = (String) selectorEquipos.getSelectedItem();
+        String nombreArchivo = "LA_Lakers.xlsx";
+        if (!nombreEquipo.equals("LA Lakers")) {
+            nombreArchivo = "GS_Warriors.xlsx";
+        }
+        
+        if (archivoEstaAbierto(nombreArchivo)) {
+            JOptionPane.showMessageDialog(this, "El archivo Excel se encuentra abierto o bloqueado por otro programa. Ciérrelo para escribir datos en él.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        crearGrafica(nombreJugador, nombreArchivo);
+        JOptionPane.showMessageDialog(this, "Gráfica creada para el jugador " + nombreJugador + ".", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_botonCrearGraficaActionPerformed
+
     private void equipoElegido() {
         selectorJugadores.removeAllItems();
         if ((String) selectorEquipos.getSelectedItem() == "LA Lakers") {
@@ -401,6 +438,65 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             return false;
         } catch (IOException e) {
             return true;
+        }
+    }
+    
+    private void crearGrafica(String nombreJugador, String nombreArchivo) {
+        double puntos = 0; // Primer dato
+        int numeroPartido = 1;
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        JFreeChart grafico = ChartFactory.createBarChart(
+                    "Puntos por Partidos", // Título
+                    "Partidos",           // Etiqueta del eje X
+                    "Puntos",              // Etiqueta del eje Y
+                    dataset                 // Conjunto de datos
+                );
+
+        try (FileInputStream fis = new FileInputStream(new File(nombreArchivo));
+             Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet hoja = workbook.getSheet(nombreJugador);
+            if (hoja == null) {
+                JOptionPane.showMessageDialog(this, "La hoja del jugador " + nombreJugador + " no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int ultimaFila = hoja.getLastRowNum();
+            
+            for (int i = 1; i <= ultimaFila - 2; i++) {
+                Row fila = hoja.getRow(i);
+                if (fila == null) continue; // Por si estuviera vacia
+                
+                Cell tirosLibres = fila.getCell(0);
+                Cell tirosDe2 = fila.getCell(2);
+                Cell triples = fila.getCell(4);
+                if (tirosLibres.getCellType() == CellType.NUMERIC && tirosDe2.getCellType() == CellType.NUMERIC
+                        && triples.getCellType() == CellType.NUMERIC) {
+                    puntos += tirosLibres.getNumericCellValue();
+                    puntos += (tirosDe2.getNumericCellValue() * 2);
+                    puntos += (triples.getNumericCellValue() * 3);
+                    
+                    String categoria = "Partido " + numeroPartido;
+                    dataset.addValue(puntos, "Datos", categoria);
+                    System.out.println(tirosLibres.getNumericCellValue());
+                    System.out.println(tirosDe2.getNumericCellValue());
+                    System.out.println(triples.getNumericCellValue());
+                    System.out.println(puntos);
+                    numeroPartido++;
+                }
+                puntos = 0;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Guardar el gráfico como archivo JPG
+        try {
+            String nombreGrafica = nombreJugador + ".jpg";
+            File archivo = new File(nombreGrafica);
+            ChartUtils.saveChartAsJPEG(archivo, grafico, 800, 600);
+            System.out.println("Gráfico guardado en: " + archivo.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Error al guardar el gráfico: " + e.getMessage());
         }
     }
     
@@ -535,19 +631,19 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             Row filaMediaTexto = hoja.createRow(numeroFilas);  // Fila para el texto "Media"
             Cell celdaMediaTexto = filaMediaTexto.createCell(0);
             celdaMediaTexto.setCellValue("Media");
-            celdaMediaTexto.setCellStyle(estilo);  // Aplicar el estilo
+            celdaMediaTexto.setCellStyle(estilo); 
 
             // Crear una fila adicional para los valores de medias
             Row filaMediaValores = hoja.createRow(numeroFilas + 1);  // Fila para los valores
 
             // Cálculo de medias para cada columna
-            for (int col = 0; col < 16; col++) {  // Para cada columna de datos
+            for (int col = 0; col < 16; col++) {
                 double suma = 0;
-                int filasDatos = numeroFilas;  // Número de filas de datos para la media
-                int conteoDatos = 0;  // Contador de celdas con datos
+                int filasDatos = numeroFilas; 
+                int conteoDatos = 0; 
 
                 // Recorrer las filas y sumar los valores de cada celda
-                for (int i = 1; i <= filasDatos; i++) {  // Desde la fila 1 hasta la última
+                for (int i = 1; i <= filasDatos; i++) {
                     Row filaActual = hoja.getRow(i);
                     if (filaActual != null && filaActual.getCell(col) != null) {
                         // Verificamos si la celda tiene un valor numérico
@@ -562,7 +658,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                 double media = conteoDatos > 0 ? suma / conteoDatos : 0;  // Evitar división por 0 si no hay datos
                 Cell celdaMediaValores = filaMediaValores.createCell(col, CellType.NUMERIC);
                 celdaMediaValores.setCellValue(media);
-                celdaMediaValores.setCellStyle(estilo);  // Aplicar el estilo
+                celdaMediaValores.setCellStyle(estilo);
             }
 
                 try (FileOutputStream archivoSalida = new FileOutputStream(nombreArchivo)) {
@@ -618,6 +714,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonCrearGrafica;
     private javax.swing.JButton botonInsertar;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
