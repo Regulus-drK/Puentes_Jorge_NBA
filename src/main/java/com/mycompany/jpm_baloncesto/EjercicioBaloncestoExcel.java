@@ -16,9 +16,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
-import java.awt.Color;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 
 /**
  *
@@ -445,11 +444,36 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         double puntos = 0; // Primer dato
         int numeroPartido = 1;
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        JFreeChart grafico = ChartFactory.createBarChart(
-                    "Puntos por Partidos", // Título
+        DefaultCategoryDataset datasetMedia = new DefaultCategoryDataset();
+        JFreeChart graficaPuntos = ChartFactory.createBarChart(
+                    "Puntos por Partido de " + nombreJugador, // Título
                     "Partidos",           // Etiqueta del eje X
                     "Puntos",              // Etiqueta del eje Y
-                    dataset                 // Conjunto de datos
+                    dataset,                 // Conjunto de datos
+                    org.jfree.chart.plot.PlotOrientation.VERTICAL,
+                    true,
+                    true,
+                    false
+                );
+        
+        // Linea media
+        CategoryPlot plot = graficaPuntos.getCategoryPlot();
+        LineAndShapeRenderer renderer = new LineAndShapeRenderer();
+        plot.setDataset(1, datasetMedia);
+        plot.mapDatasetToRangeAxis(1, 0);
+        plot.setRenderer(1, renderer);
+
+        // Gráfica rebotes
+        DefaultCategoryDataset datasetRebotes = new DefaultCategoryDataset();
+        JFreeChart graficaRebotes = ChartFactory.createLineChart(
+                    "Rebotes por Partido de " + nombreJugador, // Título
+                    "Partidos",           // Etiqueta del eje X
+                    "Rebotes",              // Etiqueta del eje Y
+                    datasetRebotes,                 // Conjunto de datos
+                    org.jfree.chart.plot.PlotOrientation.VERTICAL,
+                    true,
+                    true,
+                    false
                 );
 
         try (FileInputStream fis = new FileInputStream(new File(nombreArchivo));
@@ -469,18 +493,19 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                 Cell tirosLibres = fila.getCell(0);
                 Cell tirosDe2 = fila.getCell(2);
                 Cell triples = fila.getCell(4);
+                Cell rebotes = fila.getCell(6);
                 if (tirosLibres.getCellType() == CellType.NUMERIC && tirosDe2.getCellType() == CellType.NUMERIC
-                        && triples.getCellType() == CellType.NUMERIC) {
+                        && triples.getCellType() == CellType.NUMERIC && rebotes.getCellType() == CellType.NUMERIC) {
                     puntos += tirosLibres.getNumericCellValue();
                     puntos += (tirosDe2.getNumericCellValue() * 2);
                     puntos += (triples.getNumericCellValue() * 3);
                     
+                    double puntosMedia = puntos / 3;
+                    
                     String categoria = "Partido " + numeroPartido;
-                    dataset.addValue(puntos, "Datos", categoria);
-                    System.out.println(tirosLibres.getNumericCellValue());
-                    System.out.println(tirosDe2.getNumericCellValue());
-                    System.out.println(triples.getNumericCellValue());
-                    System.out.println(puntos);
+                    dataset.addValue(puntos, "Puntos", categoria);
+                    datasetMedia.addValue(puntos, "Media", categoria);
+                    datasetRebotes.addValue(rebotes.getNumericCellValue(), "Rebotes", categoria);
                     numeroPartido++;
                 }
                 puntos = 0;
@@ -491,10 +516,15 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
 
         // Guardar el gráfico como archivo JPG
         try {
-            String nombreGrafica = nombreJugador + ".jpg";
-            File archivo = new File(nombreGrafica);
-            ChartUtils.saveChartAsJPEG(archivo, grafico, 800, 600);
-            System.out.println("Gráfico guardado en: " + archivo.getAbsolutePath());
+            String nombreGraficaMedia = "Puntos.jpg";
+            String nombreGraficaRebotes = "Rebotes.jpg";
+            File carpetaGraficas = new File("graficas");
+            File carpetaJugador = new File(carpetaGraficas.getPath() + File.separator + nombreJugador);
+            String rutaCarpetaJugador = carpetaJugador.getPath() + File.separator;
+            new File(rutaCarpetaJugador).mkdirs();
+            ChartUtils.saveChartAsJPEG(new File(rutaCarpetaJugador + nombreGraficaMedia), graficaPuntos, 800, 600);
+            ChartUtils.saveChartAsJPEG(new File(rutaCarpetaJugador + nombreGraficaRebotes), graficaRebotes, 800, 600);
+            System.out.println("Gráficas guardadas en: " + carpetaJugador.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("Error al guardar el gráfico: " + e.getMessage());
         }
