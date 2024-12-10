@@ -41,6 +41,8 @@
                       <Component id="paneles" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="botonInsertar" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="139" max="-2" attributes="0"/>
+                          <Component id="botonCrearPDF" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                           <Component id="botonCrearGrafica" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -76,6 +78,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="botonInsertar" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="botonCrearGrafica" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="botonCrearPDF" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="70" max="32767" attributes="0"/>
               </Group>
@@ -503,6 +506,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonCrearGraficaActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="botonCrearPDF">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Crear PDF"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonCrearPDFActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

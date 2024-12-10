@@ -4,11 +4,21 @@
  */
 package com.mycompany.jpm_baloncesto;
 
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -84,6 +94,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         botonCrearGrafica = new javax.swing.JButton();
+        botonCrearPDF = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -304,6 +315,13 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             }
         });
 
+        botonCrearPDF.setText("Crear PDF");
+        botonCrearPDF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCrearPDFActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -314,6 +332,8 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                     .addComponent(paneles)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(botonInsertar)
+                        .addGap(139, 139, 139)
+                        .addComponent(botonCrearPDF)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(botonCrearGrafica)))
                 .addContainerGap())
@@ -342,7 +362,8 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botonInsertar)
-                    .addComponent(botonCrearGrafica))
+                    .addComponent(botonCrearGrafica)
+                    .addComponent(botonCrearPDF))
                 .addContainerGap(70, Short.MAX_VALUE))
         );
 
@@ -407,8 +428,25 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             return;
         }
         crearGrafica(nombreJugador, nombreArchivo);
-        JOptionPane.showMessageDialog(this, "Gráfica creada para el jugador " + nombreJugador + ".", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Gráficas creadas para el jugador " + nombreJugador + ".", "Aviso", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_botonCrearGraficaActionPerformed
+
+    private void botonCrearPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCrearPDFActionPerformed
+        String nombreJugador = (String) selectorJugadores.getSelectedItem();
+        
+        String nombreEquipo = (String) selectorEquipos.getSelectedItem();
+        String nombreArchivo = "LA_Lakers.xlsx";
+        if (!nombreEquipo.equals("LA Lakers")) {
+            nombreArchivo = "GS_Warriors.xlsx";
+        }
+        
+        if (archivoEstaAbierto(nombreArchivo)) {
+            JOptionPane.showMessageDialog(this, "El archivo Excel se encuentra abierto o bloqueado por otro programa. Ciérrelo para escribir datos en él.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        crearPDF(nombreJugador, nombreArchivo, nombreEquipo);
+        JOptionPane.showMessageDialog(this, "PDF creado para el jugador " + nombreJugador + ".", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_botonCrearPDFActionPerformed
 
     private void equipoElegido() {
         selectorJugadores.removeAllItems();
@@ -440,11 +478,97 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         }
     }
     
+    private void crearPDF(String nombreJugador, String nombreArchivo, String nombreEquipo) {
+    Document document = new Document();
+    Double mediaTriples = 0.0;
+    Double FG = 0.0;
+    Double eFG = 0.0;
+    Double TS = 0.0;
+    try {
+        PdfWriter.getInstance(document, new FileOutputStream(nombreJugador + "_informe.pdf"));
+        document.open();
+
+        // Encabezado
+        Font headerFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
+        Paragraph header = new Paragraph(nombreJugador + " - " + nombreEquipo, headerFont);
+        header.setAlignment(Element.ALIGN_CENTER);
+        document.add(header);
+
+        // Espaciado
+        document.add(new Paragraph("\n"));
+
+        // Gráficos
+        agregarImagenAlPDF(document, "graficas/" + nombreJugador + "/Puntos.jpg", "Puntos por Partido");
+        agregarImagenAlPDF(document, "graficas/" + nombreJugador + "/Rebotes.jpg", "Rebotes por Partido");
+        agregarImagenAlPDF(document, "graficas/" + nombreJugador + "/Asistencias.jpg", "Asistencias por Partido");
+
+
+        // Otras estadísticas
+        Font statsFont = new Font(Font.FontFamily.HELVETICA, 12);
+        Paragraph statsTitle = new Paragraph("Otras estadísticas", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
+        statsTitle.setAlignment(Element.ALIGN_CENTER);
+        document.add(statsTitle);
+
+        try (FileInputStream fis = new FileInputStream(new File(nombreArchivo));
+            Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet hoja = workbook.getSheet(nombreJugador);
+            if (hoja == null) {
+                JOptionPane.showMessageDialog(this, "La hoja del jugador " + nombreJugador + " no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int ultimaFila = hoja.getLastRowNum();
+            Row ultimaFilaObjeto = hoja.getRow(ultimaFila);
+                
+            mediaTriples = ultimaFilaObjeto.getCell(4).getNumericCellValue();
+            FG = ultimaFilaObjeto.getCell(13).getNumericCellValue();
+            eFG = ultimaFilaObjeto.getCell(14).getNumericCellValue();
+            TS = ultimaFilaObjeto.getCell(15).getNumericCellValue();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        String stats1 = "Triples por Partido: " + mediaTriples + "   FG%: " + FG;
+        String stats2 = "eFG%: " + eFG + "         TS%: " + TS;
+
+        Paragraph statsParagraph = new Paragraph(stats1 + "\n" + stats2, statsFont);
+        statsParagraph.setAlignment(Element.ALIGN_CENTER);
+        document.add(statsParagraph);
+        } catch (BadElementException ex) {
+            System.err.println("Error al procesar un elemento del documento: " + ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println("Error de entrada/salida: " + ex.getMessage());
+        } catch (DocumentException ex) {
+            System.err.println("Error al manejar el documento PDF: " + ex.getMessage());
+        }
+        document.close();
+        System.out.println("PDF creado para " + nombreJugador);
+    }
+    
+    private void agregarImagenAlPDF(Document document, String rutaImagen, String titulo) throws DocumentException, IOException {
+    File imagen = new File(rutaImagen);
+    if (imagen.exists()) {
+        Image img = Image.getInstance(rutaImagen);
+        img.scaleToFit(350, 175); // Tamaño
+        img.setAlignment(Element.ALIGN_CENTER);
+        document.add(img);
+
+        Paragraph imageTitle = new Paragraph(titulo, new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD));
+        imageTitle.setAlignment(Element.ALIGN_CENTER);
+        document.add(imageTitle);
+
+        // Espaciado
+        document.add(new Paragraph("\n"));
+    }
+}
+    
     private void crearGrafica(String nombreJugador, String nombreArchivo) {
         double puntos = 0; // Primer dato
         int numeroPartido = 1;
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         DefaultCategoryDataset datasetMedia = new DefaultCategoryDataset();
+        
         JFreeChart graficaPuntos = ChartFactory.createBarChart(
                     "Puntos por Partido de " + nombreJugador, // Título
                     "Partidos",           // Etiqueta del eje X
@@ -475,9 +599,22 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                     true,
                     false
                 );
-
+        
+        // Gráfica asistencias
+        DefaultCategoryDataset datasetAsistencias = new DefaultCategoryDataset();
+        JFreeChart graficaAsistencias = ChartFactory.createBarChart(
+                    "Asistencias por Partido de " + nombreJugador, // Título
+                    "Partidos",           // Etiqueta del eje X
+                    "Asistencias",              // Etiqueta del eje Y
+                    datasetAsistencias,                 // Conjunto de datos
+                    org.jfree.chart.plot.PlotOrientation.VERTICAL,
+                    true,
+                    true,
+                    false
+                );
+        // Lectura Excel
         try (FileInputStream fis = new FileInputStream(new File(nombreArchivo));
-             Workbook workbook = new XSSFWorkbook(fis)) {
+            Workbook workbook = new XSSFWorkbook(fis)) {
             Sheet hoja = workbook.getSheet(nombreJugador);
             if (hoja == null) {
                 JOptionPane.showMessageDialog(this, "La hoja del jugador " + nombreJugador + " no existe.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -494,6 +631,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                 Cell tirosDe2 = fila.getCell(2);
                 Cell triples = fila.getCell(4);
                 Cell rebotes = fila.getCell(6);
+                Cell asistencias = fila.getCell(7);
                 if (tirosLibres.getCellType() == CellType.NUMERIC && tirosDe2.getCellType() == CellType.NUMERIC
                         && triples.getCellType() == CellType.NUMERIC && rebotes.getCellType() == CellType.NUMERIC) {
                     puntos += tirosLibres.getNumericCellValue();
@@ -506,6 +644,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                     dataset.addValue(puntos, "Puntos", categoria);
                     datasetMedia.addValue(puntos, "Media", categoria);
                     datasetRebotes.addValue(rebotes.getNumericCellValue(), "Rebotes", categoria);
+                    datasetAsistencias.addValue(asistencias.getNumericCellValue(), "Asistencias", categoria);
                     numeroPartido++;
                 }
                 puntos = 0;
@@ -518,12 +657,14 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         try {
             String nombreGraficaMedia = "Puntos.jpg";
             String nombreGraficaRebotes = "Rebotes.jpg";
+            String nombreGraficaAsistencias = "Asistencias.jpg";
             File carpetaGraficas = new File("graficas");
             File carpetaJugador = new File(carpetaGraficas.getPath() + File.separator + nombreJugador);
             String rutaCarpetaJugador = carpetaJugador.getPath() + File.separator;
             new File(rutaCarpetaJugador).mkdirs();
             ChartUtils.saveChartAsJPEG(new File(rutaCarpetaJugador + nombreGraficaMedia), graficaPuntos, 800, 600);
             ChartUtils.saveChartAsJPEG(new File(rutaCarpetaJugador + nombreGraficaRebotes), graficaRebotes, 800, 600);
+            ChartUtils.saveChartAsJPEG(new File(rutaCarpetaJugador + nombreGraficaAsistencias), graficaAsistencias, 800, 600);
             System.out.println("Gráficas guardadas en: " + carpetaJugador.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("Error al guardar el gráfico: " + e.getMessage());
@@ -550,7 +691,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             Sheet hoja = libroTrabajo.getSheet(nombreHoja);
             
             CellStyle estiloMain = libroTrabajo.createCellStyle();
-            Font fuenteMain = libroTrabajo.createFont();
+            org.apache.poi.ss.usermodel.Font fuenteMain = libroTrabajo.createFont();
             fuenteMain.setBold(true);
             fuenteMain.setColor(IndexedColors.DARK_GREEN.getIndex());
             fuenteMain.setFontName("Calibri");
@@ -596,7 +737,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             }
             
             CellStyle estilo = libroTrabajo.createCellStyle();
-            Font fuente = libroTrabajo.createFont();
+            org.apache.poi.ss.usermodel.Font fuente = libroTrabajo.createFont();
             fuente.setBold(true);
             fuente.setColor(IndexedColors.BLUE.getIndex());
             fuente.setFontName("Arial");
@@ -745,6 +886,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonCrearGrafica;
+    private javax.swing.JButton botonCrearPDF;
     private javax.swing.JButton botonInsertar;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
