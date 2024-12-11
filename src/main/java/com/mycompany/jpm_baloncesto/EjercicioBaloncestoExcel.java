@@ -12,13 +12,12 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.awt.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -37,6 +36,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
     private static Integer tirosDe2Realizados, tirosDe2Metidos, triplesRealizados, triplesMetidos, 
             tirosLibresMetidos, tirosLibresRealizados, rebotes, asistencias, taponesFavor, taponesContra,
             robos, perdidas;
+    FrameCondiciones frameCondiciones = new FrameCondiciones();
     /**
      * Creates new form EjercicioBaloncestoExcel
      */
@@ -47,8 +47,14 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         this.setResizable(false);
         this.setTitle("Estadísticas Baloncesto");
         selectorEquipos.setSelectedItem("LA Lakers");
+        selectorPequenio.addActionListener(e -> tamanioElegido());
+        selectorMediano.addActionListener(e -> tamanioElegido());
+        selectorGrande.addActionListener(e -> tamanioElegido());
+        buttonGroup1.clearSelection(); // Deseleccionar los radio button
+        tamanioElegido();
         // minimumSize = this.getSize
         // setSize = el deseado
+        
     }
 
     /**
@@ -60,137 +66,147 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jPopupMenu1 = new javax.swing.JPopupMenu();
         jPanel1 = new javax.swing.JPanel();
         paneles = new javax.swing.JTabbedPane();
         panelTiros = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
         numTirosLibresMetidos = new javax.swing.JSpinner();
-        jLabel7 = new javax.swing.JLabel();
         numTirosLibresRealizados = new javax.swing.JSpinner();
-        jLabel3 = new javax.swing.JLabel();
         numTirosDe2Metidos = new javax.swing.JSpinner();
-        jLabel8 = new javax.swing.JLabel();
         numTirosDe2Realizados = new javax.swing.JSpinner();
-        jLabel4 = new javax.swing.JLabel();
         numTriplesMetidos = new javax.swing.JSpinner();
-        jLabel5 = new javax.swing.JLabel();
         numTriplesRealizados = new javax.swing.JSpinner();
+        textoJLabelPersonalizado1 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado2 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado3 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado4 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado5 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado6 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
         panelOtrosDatos = new javax.swing.JPanel();
         numRebotes = new javax.swing.JSpinner();
         numTaponesFavor = new javax.swing.JSpinner();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
         numRobos = new javax.swing.JSpinner();
         numAsistencias = new javax.swing.JSpinner();
         numTaponesContra = new javax.swing.JSpinner();
         numPerdidas = new javax.swing.JSpinner();
+        textoJLabelPersonalizado9 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado10 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado11 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado12 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado13 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado14 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
         botonInsertar = new javax.swing.JButton();
         selectorEquipos = new javax.swing.JComboBox<>();
         selectorJugadores = new javax.swing.JComboBox<>();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
         botonCrearGrafica = new javax.swing.JButton();
         botonCrearPDF = new javax.swing.JButton();
+        textoJLabelPersonalizado7 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        textoJLabelPersonalizado8 = new com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        menuTamanio = new javax.swing.JMenu();
+        selectorPequenio = new javax.swing.JRadioButtonMenuItem();
+        selectorMediano = new javax.swing.JRadioButtonMenuItem();
+        selectorGrande = new javax.swing.JRadioButtonMenuItem();
+        menuCondiciones = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel6.setText("Tiros libres metidos:");
-
         numTirosLibresMetidos.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         numTirosLibresMetidos.setPreferredSize(new java.awt.Dimension(90, 25));
-
-        jLabel7.setText("Tiros libres realizados:");
 
         numTirosLibresRealizados.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         numTirosLibresRealizados.setPreferredSize(new java.awt.Dimension(90, 25));
 
-        jLabel3.setText("Tiros de 2 metidos:");
-
         numTirosDe2Metidos.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         numTirosDe2Metidos.setPreferredSize(new java.awt.Dimension(90, 25));
-
-        jLabel8.setText("Tiros de 2 realizados:");
 
         numTirosDe2Realizados.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         numTirosDe2Realizados.setPreferredSize(new java.awt.Dimension(90, 25));
 
-        jLabel4.setText("Triples metidos:");
-
         numTriplesMetidos.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         numTriplesMetidos.setPreferredSize(new java.awt.Dimension(90, 25));
 
-        jLabel5.setText("Triples realizados:");
-
         numTriplesRealizados.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         numTriplesRealizados.setPreferredSize(new java.awt.Dimension(90, 25));
+
+        textoJLabelPersonalizado1.setText("Tiros libres metidos:");
+
+        textoJLabelPersonalizado2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado2.setText("Tiros de 2 metidos:");
+
+        textoJLabelPersonalizado3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado3.setText("Triples metidos:");
+
+        textoJLabelPersonalizado4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado4.setText("Tiros libres realizados:");
+
+        textoJLabelPersonalizado5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado5.setText("Tiros de 2 realizados:");
+
+        textoJLabelPersonalizado6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado6.setText("Triples realizados:");
 
         javax.swing.GroupLayout panelTirosLayout = new javax.swing.GroupLayout(panelTiros);
         panelTiros.setLayout(panelTirosLayout);
         panelTirosLayout.setHorizontalGroup(
             panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTirosLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(textoJLabelPersonalizado1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(textoJLabelPersonalizado2, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                        .addComponent(textoJLabelPersonalizado3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(49, 49, 49)
+                .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(numTirosDe2Metidos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(numTriplesMetidos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(numTirosLibresMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 115, Short.MAX_VALUE)
+                .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(panelTirosLayout.createSequentialGroup()
+                        .addComponent(textoJLabelPersonalizado4, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(numTirosLibresRealizados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelTirosLayout.createSequentialGroup()
                         .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(panelTirosLayout.createSequentialGroup()
-                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19)
-                                .addComponent(numTirosLibresMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(panelTirosLayout.createSequentialGroup()
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(numTirosDe2Metidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                            .addComponent(textoJLabelPersonalizado5, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+                            .addComponent(textoJLabelPersonalizado6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTirosLayout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addGap(18, 18, 18)
-                                .addComponent(numTirosLibresRealizados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(panelTirosLayout.createSequentialGroup()
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(numTriplesRealizados, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(panelTirosLayout.createSequentialGroup()
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(numTirosDe2Realizados, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                    .addGroup(panelTirosLayout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(19, 19, 19)
-                        .addComponent(numTriplesMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 330, Short.MAX_VALUE)))
+                            .addComponent(numTirosDe2Realizados, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(numTriplesRealizados, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         panelTirosLayout.setVerticalGroup(
             panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTirosLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(numTirosLibresMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7)
-                    .addComponent(numTirosLibresRealizados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(numTirosDe2Realizados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(numTirosDe2Metidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
                 .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(numTriplesRealizados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5))
-                    .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(numTriplesMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4)))
+                    .addGroup(panelTirosLayout.createSequentialGroup()
+                        .addComponent(numTirosLibresMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(numTirosDe2Metidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(numTriplesMetidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelTirosLayout.createSequentialGroup()
+                        .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(numTirosLibresRealizados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textoJLabelPersonalizado1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textoJLabelPersonalizado4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(numTirosDe2Realizados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textoJLabelPersonalizado2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textoJLabelPersonalizado5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(numTriplesRealizados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panelTirosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(textoJLabelPersonalizado3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(textoJLabelPersonalizado6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(76, Short.MAX_VALUE))
         );
 
@@ -201,18 +217,6 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
 
         numTaponesFavor.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         numTaponesFavor.setPreferredSize(new java.awt.Dimension(90, 25));
-
-        jLabel9.setText("Rebotes:");
-
-        jLabel10.setText("Asistencias:");
-
-        jLabel11.setText("Robos:");
-
-        jLabel12.setText("Tapones a favor:");
-
-        jLabel13.setText("Tapones en contra:");
-
-        jLabel14.setText("Pérdidas:");
 
         numRobos.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         numRobos.setPreferredSize(new java.awt.Dimension(90, 25));
@@ -226,6 +230,24 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         numPerdidas.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         numPerdidas.setPreferredSize(new java.awt.Dimension(90, 25));
 
+        textoJLabelPersonalizado9.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado9.setText("Rebotes:");
+
+        textoJLabelPersonalizado10.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado10.setText("Tapones a favor:");
+
+        textoJLabelPersonalizado11.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado11.setText("Robos:");
+
+        textoJLabelPersonalizado12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado12.setText("Asistencias:");
+
+        textoJLabelPersonalizado13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado13.setText("Tapones en contra:");
+
+        textoJLabelPersonalizado14.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        textoJLabelPersonalizado14.setText("Perdidas:");
+
         javax.swing.GroupLayout panelOtrosDatosLayout = new javax.swing.GroupLayout(panelOtrosDatos);
         panelOtrosDatos.setLayout(panelOtrosDatosLayout);
         panelOtrosDatosLayout.setHorizontalGroup(
@@ -233,55 +255,59 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             .addGroup(panelOtrosDatosLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelOtrosDatosLayout.createSequentialGroup()
-                        .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(numTaponesFavor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(numRobos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panelOtrosDatosLayout.createSequentialGroup()
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(numRebotes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(67, 67, 67)
+                    .addComponent(textoJLabelPersonalizado11, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                    .addComponent(textoJLabelPersonalizado10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(textoJLabelPersonalizado9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(numTaponesFavor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(numRobos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(numRebotes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(52, 52, 52)
                 .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelOtrosDatosLayout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(textoJLabelPersonalizado14, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(numPerdidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelOtrosDatosLayout.createSequentialGroup()
+                        .addComponent(textoJLabelPersonalizado12, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(numAsistencias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelOtrosDatosLayout.createSequentialGroup()
-                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(textoJLabelPersonalizado13, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(numTaponesContra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelOtrosDatosLayout.createSequentialGroup()
-                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(numPerdidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(69, Short.MAX_VALUE))
+                        .addComponent(numTaponesContra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         panelOtrosDatosLayout.setVerticalGroup(
             panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelOtrosDatosLayout.createSequentialGroup()
+            .addGroup(panelOtrosDatosLayout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(numRebotes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel10)
-                    .addComponent(numAsistencias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(numTaponesFavor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13)
-                    .addComponent(numTaponesContra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(numRobos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14)
-                    .addComponent(numPerdidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panelOtrosDatosLayout.createSequentialGroup()
+                        .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(numAsistencias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textoJLabelPersonalizado12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(numTaponesContra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textoJLabelPersonalizado13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(numPerdidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textoJLabelPersonalizado14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panelOtrosDatosLayout.createSequentialGroup()
+                        .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(numRebotes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textoJLabelPersonalizado9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(numTaponesFavor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textoJLabelPersonalizado10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(panelOtrosDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(numRobos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textoJLabelPersonalizado11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(67, Short.MAX_VALUE))
         );
 
@@ -304,10 +330,6 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         selectorJugadores.setToolTipText("");
         selectorJugadores.setName(""); // NOI18N
 
-        jLabel15.setText("Jugador:");
-
-        jLabel16.setText("Equipo:");
-
         botonCrearGrafica.setText("Crear Gráfica");
         botonCrearGrafica.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -322,6 +344,10 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             }
         });
 
+        textoJLabelPersonalizado7.setText("Jugador:");
+
+        textoJLabelPersonalizado8.setText("Equipo:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -329,24 +355,25 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(paneles)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(paneles)
+                        .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(botonInsertar)
-                        .addGap(139, 139, 139)
+                        .addGap(195, 195, 195)
                         .addComponent(botonCrearPDF)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(botonCrearGrafica)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(selectorJugadores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(selectorEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+                        .addComponent(botonCrearGrafica)
+                        .addGap(14, 14, 14))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(textoJLabelPersonalizado7, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(selectorJugadores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(textoJLabelPersonalizado8, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(selectorEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(14, 14, 14))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -355,8 +382,8 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(selectorEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectorJugadores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel15)
-                    .addComponent(jLabel16))
+                    .addComponent(textoJLabelPersonalizado7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textoJLabelPersonalizado8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(paneles, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -367,7 +394,36 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                 .addContainerGap(70, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 580, 390));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 390));
+
+        menuTamanio.setText("Tamaño");
+
+        buttonGroup1.add(selectorPequenio);
+        selectorPequenio.setSelected(true);
+        selectorPequenio.setText("Pequeño");
+        selectorPequenio.setBorderPainted(false);
+        menuTamanio.add(selectorPequenio);
+
+        buttonGroup1.add(selectorMediano);
+        selectorMediano.setText("Mediano");
+        menuTamanio.add(selectorMediano);
+
+        buttonGroup1.add(selectorGrande);
+        selectorGrande.setText("Grande");
+        menuTamanio.add(selectorGrande);
+
+        jMenuBar1.add(menuTamanio);
+
+        menuCondiciones.setText("Condiciones de servicio");
+        menuCondiciones.setComponentPopupMenu(jPopupMenu1);
+        menuCondiciones.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menuCondicionesMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(menuCondiciones);
+
+        setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -392,7 +448,6 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         if (!nombreEquipo.equals("LA Lakers")) {
             nombreArchivo = "GS_Warriors.xlsx";
         }
-        
         
         
         if ((tirosDe2Metidos + triplesMetidos + tirosLibresMetidos) > (triplesRealizados + tirosDe2Realizados + tirosLibresRealizados)) {
@@ -448,6 +503,44 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "PDF creado para el jugador " + nombreJugador + ".", "Aviso", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_botonCrearPDFActionPerformed
 
+    private void menuCondicionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuCondicionesMouseClicked
+        frameCondiciones.setVisible(true);
+    }//GEN-LAST:event_menuCondicionesMouseClicked
+
+    private void tamanioElegido() {
+        int tamanioSeleccionado = 0;
+        
+        if (selectorPequenio.isSelected()) {
+            tamanioSeleccionado = 1;
+        } else if (selectorMediano.isSelected()) {
+            tamanioSeleccionado = 2;
+        } else if (selectorGrande.isSelected()) {
+            tamanioSeleccionado = 3;
+        }
+       
+        
+        for (Component comp : jPanel1.getComponents()) {
+            if (comp instanceof TextoJLabelPersonalizado) {
+                TextoJLabelPersonalizado lbl = (TextoJLabelPersonalizado) comp;
+                lbl.cambiarTamanio(tamanioSeleccionado);
+            }
+        }
+        
+        for (Component comp : panelTiros.getComponents()) {
+            if (comp instanceof TextoJLabelPersonalizado) {
+                TextoJLabelPersonalizado lbl = (TextoJLabelPersonalizado) comp;
+                lbl.cambiarTamanio(tamanioSeleccionado);
+            }
+        }
+        
+        for (Component comp : panelOtrosDatos.getComponents()) {
+            if (comp instanceof TextoJLabelPersonalizado) {
+                TextoJLabelPersonalizado lbl = (TextoJLabelPersonalizado) comp;
+                lbl.cambiarTamanio(tamanioSeleccionado);
+            }
+        }
+    }
+    
     private void equipoElegido() {
         selectorJugadores.removeAllItems();
         if ((String) selectorEquipos.getSelectedItem() == "LA Lakers") {
@@ -888,21 +981,12 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
     private javax.swing.JButton botonCrearGrafica;
     private javax.swing.JButton botonCrearPDF;
     private javax.swing.JButton botonInsertar;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JMenu menuCondiciones;
+    private javax.swing.JMenu menuTamanio;
     private javax.swing.JSpinner numAsistencias;
     private javax.swing.JSpinner numPerdidas;
     private javax.swing.JSpinner numRebotes;
@@ -919,6 +1003,23 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
     private javax.swing.JPanel panelTiros;
     private javax.swing.JTabbedPane paneles;
     private javax.swing.JComboBox<String> selectorEquipos;
+    private javax.swing.JRadioButtonMenuItem selectorGrande;
     private javax.swing.JComboBox<String> selectorJugadores;
+    private javax.swing.JRadioButtonMenuItem selectorMediano;
+    private javax.swing.JRadioButtonMenuItem selectorPequenio;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado1;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado10;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado11;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado12;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado13;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado14;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado2;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado3;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado4;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado5;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado6;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado7;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado8;
+    private com.mycompany.jpm_baloncesto.TextoJLabelPersonalizado textoJLabelPersonalizado9;
     // End of variables declaration//GEN-END:variables
 }
