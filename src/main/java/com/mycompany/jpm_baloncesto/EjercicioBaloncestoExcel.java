@@ -43,17 +43,21 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
     public EjercicioBaloncestoExcel() {
         
         initComponents();
-        setLocationRelativeTo(null);
-        this.setResizable(false);
-        this.setTitle("Estadísticas Baloncesto");
+        setLocationRelativeTo(null); // Posicionar en el centro de la pantalla
+        this.setResizable(false);  // Bloquear el poder cambiar el tamaño
+        this.setTitle("Estadísticas Baloncesto"); // Titulo del programa
         selectorEquipos.setSelectedItem("LA Lakers");
-        selectorPequenio.addActionListener(e -> tamanioElegido());
+        // Listeners para que los radioButton ejecuten dicho metodo
+        selectorPequenio.addActionListener(e -> tamanioElegido()); 
         selectorMediano.addActionListener(e -> tamanioElegido());
         selectorGrande.addActionListener(e -> tamanioElegido());
         buttonGroup1.clearSelection(); // Deseleccionar los radio button
         tamanioElegido();
-        // minimumSize = this.getSize
-        // setSize = el deseado
+        
+        // Poner un tamaño minimo para que no se pueda agrandar ni reducir más alla de eso
+        //setMinimumSize(new Dimension(200, 150));  // Poner tamaño especifico minimo
+        // setMinimumSize(this.getSize()); // Poner tamaño actual como minimo
+        // setSize(650, 650); // Poner tamaño base especifico
         
     }
 
@@ -572,55 +576,55 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
     }
     
     private void crearPDF(String nombreJugador, String nombreArchivo, String nombreEquipo) {
-    Document document = new Document();
-    Double mediaTriples = 0.0;
-    Double FG = 0.0;
-    Double eFG = 0.0;
-    Double TS = 0.0;
-    try {
-        PdfWriter.getInstance(document, new FileOutputStream(nombreJugador + "_informe.pdf"));
-        document.open();
+        Document document = new Document();
+        Double mediaTriples = 0.0;
+        Double FG = 0.0;
+        Double eFG = 0.0;
+        Double TS = 0.0;
+        try {
+            PdfWriter.getInstance(document, new FileOutputStream(nombreJugador + "_informe.pdf"));
+            document.open();
 
-        // Encabezado
-        Font headerFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
-        Paragraph header = new Paragraph(nombreJugador + " - " + nombreEquipo, headerFont);
-        header.setAlignment(Element.ALIGN_CENTER);
-        document.add(header);
+            // Encabezado
+            Font headerFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
+            Paragraph header = new Paragraph(nombreJugador + " - " + nombreEquipo, headerFont);
+            header.setAlignment(Element.ALIGN_CENTER);
+            document.add(header);
 
-        // Espaciado
-        document.add(new Paragraph("\n"));
+            // Espaciado
+            document.add(new Paragraph("\n"));
 
-        // Gráficos
-        agregarImagenAlPDF(document, "graficas/" + nombreJugador + "/Puntos.jpg", "Puntos por Partido");
-        agregarImagenAlPDF(document, "graficas/" + nombreJugador + "/Rebotes.jpg", "Rebotes por Partido");
-        agregarImagenAlPDF(document, "graficas/" + nombreJugador + "/Asistencias.jpg", "Asistencias por Partido");
+            // Gráficos
+            agregarImagenAlPDF(document, "graficas/" + nombreJugador + "/Puntos.jpg", "Puntos por Partido");
+            agregarImagenAlPDF(document, "graficas/" + nombreJugador + "/Rebotes.jpg", "Rebotes por Partido");
+            agregarImagenAlPDF(document, "graficas/" + nombreJugador + "/Asistencias.jpg", "Asistencias por Partido");
 
 
-        // Otras estadísticas
-        Font statsFont = new Font(Font.FontFamily.HELVETICA, 12);
-        Paragraph statsTitle = new Paragraph("Otras estadísticas", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
-        statsTitle.setAlignment(Element.ALIGN_CENTER);
-        document.add(statsTitle);
+            // Otras estadísticas
+            Font statsFont = new Font(Font.FontFamily.HELVETICA, 12);
+            Paragraph statsTitle = new Paragraph("Otras estadísticas", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
+            statsTitle.setAlignment(Element.ALIGN_CENTER);
+            document.add(statsTitle);
 
-        try (FileInputStream fis = new FileInputStream(new File(nombreArchivo));
-            Workbook workbook = new XSSFWorkbook(fis)) {
-            Sheet hoja = workbook.getSheet(nombreJugador);
-            if (hoja == null) {
-                JOptionPane.showMessageDialog(this, "La hoja del jugador " + nombreJugador + " no existe.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+            try (FileInputStream fis = new FileInputStream(new File(nombreArchivo));
+                Workbook workbook = new XSSFWorkbook(fis)) {
+                Sheet hoja = workbook.getSheet(nombreJugador);
+                if (hoja == null) {
+                    JOptionPane.showMessageDialog(this, "La hoja del jugador " + nombreJugador + " no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                int ultimaFila = hoja.getLastRowNum();
+                Row ultimaFilaObjeto = hoja.getRow(ultimaFila);
+
+                mediaTriples = ultimaFilaObjeto.getCell(4).getNumericCellValue();
+                FG = ultimaFilaObjeto.getCell(13).getNumericCellValue();
+                eFG = ultimaFilaObjeto.getCell(14).getNumericCellValue();
+                TS = ultimaFilaObjeto.getCell(15).getNumericCellValue();
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            int ultimaFila = hoja.getLastRowNum();
-            Row ultimaFilaObjeto = hoja.getRow(ultimaFila);
-                
-            mediaTriples = ultimaFilaObjeto.getCell(4).getNumericCellValue();
-            FG = ultimaFilaObjeto.getCell(13).getNumericCellValue();
-            eFG = ultimaFilaObjeto.getCell(14).getNumericCellValue();
-            TS = ultimaFilaObjeto.getCell(15).getNumericCellValue();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         
         String stats1 = "Triples por Partido: " + mediaTriples + "   FG%: " + FG;
         String stats2 = "eFG%: " + eFG + "         TS%: " + TS;
@@ -640,21 +644,21 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
     }
     
     private void agregarImagenAlPDF(Document document, String rutaImagen, String titulo) throws DocumentException, IOException {
-    File imagen = new File(rutaImagen);
-    if (imagen.exists()) {
-        Image img = Image.getInstance(rutaImagen);
-        img.scaleToFit(350, 175); // Tamaño
-        img.setAlignment(Element.ALIGN_CENTER);
-        document.add(img);
+        File imagen = new File(rutaImagen);
+        if (imagen.exists()) {
+            Image img = Image.getInstance(rutaImagen);
+            img.scaleToFit(350, 175); // Tamaño
+            img.setAlignment(Element.ALIGN_CENTER);
+            document.add(img);
 
-        Paragraph imageTitle = new Paragraph(titulo, new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD));
-        imageTitle.setAlignment(Element.ALIGN_CENTER);
-        document.add(imageTitle);
+            Paragraph imageTitle = new Paragraph(titulo, new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD));
+            imageTitle.setAlignment(Element.ALIGN_CENTER);
+            document.add(imageTitle);
 
-        // Espaciado
-        document.add(new Paragraph("\n"));
+            // Espaciado
+            document.add(new Paragraph("\n"));
+        }
     }
-}
     
     private void crearGrafica(String nombreJugador, String nombreArchivo) {
         double puntos = 0; // Primer dato
@@ -735,7 +739,7 @@ public class EjercicioBaloncestoExcel extends javax.swing.JFrame {
                     
                     String categoria = "Partido " + numeroPartido;
                     dataset.addValue(puntos, "Puntos", categoria);
-                    datasetMedia.addValue(puntos, "Media", categoria);
+                    datasetMedia.addValue(puntosMedia, "Media", categoria);
                     datasetRebotes.addValue(rebotes.getNumericCellValue(), "Rebotes", categoria);
                     datasetAsistencias.addValue(asistencias.getNumericCellValue(), "Asistencias", categoria);
                     numeroPartido++;
